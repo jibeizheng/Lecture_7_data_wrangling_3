@@ -1,26 +1,19 @@
----
-title: "Tidy_data"
-output: github_document
----
-
-```{r, echo = FALSE, message = FALSE}
-library(tidyverse)
-library(haven)
-```
+Tidy\_data
+================
 
 ## `pivot_longer`
 
 Load the PULSe data
 
-```{r, warning = FALSE}
+``` r
 pulse_df = 
   read_sas("data/public_pulse_data.sas7bdat") %>% 
   janitor::clean_names()
 ```
 
-Let's try to pivot
+Let’s try to pivot
 
-```{r}
+``` r
 pulse_tidy = 
   pulse_df %>% 
   pivot_longer(
@@ -34,4 +27,3 @@ pulse_tidy =
     visit = factor(visit)
   )
 ```
-
