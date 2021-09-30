@@ -1,0 +1,114 @@
+---
+title: "Data_manipulation"
+output: github_document
+---
+
+```{r, echo = FALSE, message = FALSE}
+library(tidyverse)
+```
+
+## Import some data
+
+I want to import `FAS_litters.csv`.
+
+```{r}
+litters_df = read_csv("data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df)
+
+pups_df = read_csv("data/FAS_pups.csv")
+pups_df = janitor::clean_names(pups_df)
+```
+
+
+## `select`
+
+Let's select some columns.
+
+```{r}
+select(litters_df, group, litter_number)
+select(litters_df, group, gd0_weight, gd18_weight)
+
+select(litters_df, group, gd0_weight:gd_of_birth)
+select(litters_df, starts_with("pups"))
+
+select(litters_df, -litter_number)
+
+select(litters_df, GROUP = group, litter_number)
+
+rename(litters_df, GROUP = group)
+
+select(litters_df, litter_number, everything())
+
+relocate(litters_df, litter_number)
+
+select(pups_df, litter_number, sex, pd_ears)
+```
+
+## `filter`
+
+Let's get rid of rows
+
+```{r}
+filter(litters_df, gd_of_birth == 20)
+filter(litters_df, group == "Con7")
+
+filter(litters_df, gd0_weight < 23)
+
+filter(litters_df, pups_survive != 4)
+
+filter(litters_df, !(group == "Con7"))
+
+filter(litters_df, group %in% c("Con7", "Con8"))
+
+#且
+filter(litters_df, group == "Con7", gd_of_birth == 20)
+filter(litters_df, group == "Con7" & gd_of_birth == 20)
+
+#或
+filter(litters_df, group == "Con7" | gd_of_birth == 20)
+
+drop_na(litters_df)
+drop_na(litters_df, gd0_weight)
+```
+
+## `mutate`
+
+Let's add or change columns!
+
+```{r}
+mutate(
+  litters_df, 
+  weight_chage = gd18_weight - gd0_weight,
+  group = str_to_lower(group))
+```
+
+## `arrange`
+
+Let's rearrange the data.
+
+```{r}
+arrange(litters_df, gd_of_birth, gd0_weight)
+```
+
+## Pipes
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv") %>%
+  janitor::clean_names() %>% 
+  select(group, pups_survive) %>% 
+  filter(group == "Con7")
+
+litters_df =
+  read_csv("data/FAS_litters.csv") %>%
+  janitor::clean_names() %>% 
+  select(-pups_survive) %>% 
+  mutate(
+    weight_change = gd18_weight - gd0_weight,
+    group = str_to_lower(group)
+  ) %>% 
+  drop_na(weight_change) %>% 
+  filter(group %in% c("con7", "con8")) %>% 
+  select(litter_number, group, weight_change, everything())
+```
+
