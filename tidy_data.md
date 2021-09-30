@@ -3,7 +3,7 @@ Tidy\_data
 
 ## `pivot_longer`
 
-Load the PULSe data
+Load the PULSE data
 
 ``` r
 pulse_df = 
@@ -27,3 +27,39 @@ pulse_tidy =
     visit = factor(visit)
   )
 ```
+
+## `pivor_wider`
+
+make up a results data table
+
+``` r
+analysis_df = 
+  tibble(
+    group = c("treatment", "treatment", "control", "control"),
+    time = c("a", "b", "a", "b"),
+    group_mean = c(4, 8, 3, 6)
+  )
+analysis_df
+```
+
+    ## # A tibble: 4 x 3
+    ##   group     time  group_mean
+    ##   <chr>     <chr>      <dbl>
+    ## 1 treatment a              4
+    ## 2 treatment b              8
+    ## 3 control   a              3
+    ## 4 control   b              6
+
+``` r
+analysis_df %>% 
+  pivot_wider(
+    names_from = "time",
+    values_from = "group_mean"
+  )
+```
+
+    ## # A tibble: 2 x 3
+    ##   group         a     b
+    ##   <chr>     <dbl> <dbl>
+    ## 1 treatment     4     8
+    ## 2 control       3     6
